@@ -1,15 +1,17 @@
 package vetweb.store.api.models;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_product")
-public class Product {
+@Table(name = "tbl_category")
+public class Category {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,18 +19,15 @@ public class Product {
 	
 	private String description;
 	
-	private Double price;
+	@OneToMany(mappedBy = "category")
+	private List<Product> products;
 	
-	@ManyToOne
-	private Category category;
-	
-	public Product() {
+	public Category() {
 	}
-	
-	public Product(Long id, String description, Double price) {
+
+	public Category(Long id, String description) {
 		this.id = id;
 		this.description = description;
-		this.price = price;
 	}
 
 	public Long getId() {
@@ -47,20 +46,12 @@ public class Product {
 		this.description = description;
 	}
 
-	public Double getPrice() {
-		return price;
+	public List<Product> getProducts() {
+		return products;
 	}
 
-	public void setPrice(Double price) {
-		this.price = price;
-	}
-
-	public Category getCategory() {
-		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
+	public void setProducts(List<Product> products) {
+		this.products = products;
 	}
 	
 
