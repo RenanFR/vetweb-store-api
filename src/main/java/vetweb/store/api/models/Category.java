@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "tbl_category")
 public class Category {
@@ -20,6 +22,7 @@ public class Category {
 	private String description;
 	
 	@OneToMany(mappedBy = "category")
+	@JsonBackReference
 	private List<Product> products;
 	
 	public Category() {
