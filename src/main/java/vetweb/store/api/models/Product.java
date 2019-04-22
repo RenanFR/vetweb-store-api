@@ -7,8 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 @Entity
 @Table(name = "tbl_product")
 public class Product {
@@ -22,7 +20,7 @@ public class Product {
 	private Double price;
 	
 	@ManyToOne
-	@JsonManagedReference
+//	@JsonBackReference
 	private Category category;
 	
 	public Product() {

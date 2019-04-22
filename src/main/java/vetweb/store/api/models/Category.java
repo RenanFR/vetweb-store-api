@@ -8,8 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tbl_category")
@@ -22,8 +23,12 @@ public class Category {
 	private String description;
 	
 	@OneToMany(mappedBy = "category")
-	@JsonBackReference
+//	@JsonManagedReference
+	@JsonIgnore
 	private List<Product> products;
+	
+	@Transient
+	private int amountProducts;
 	
 	public Category() {
 	}
@@ -55,6 +60,14 @@ public class Category {
 
 	public void setProducts(List<Product> products) {
 		this.products = products;
+	}
+
+	public int getAmountProducts() {
+		return amountProducts;
+	}
+
+	public void setAmountProducts(int amountProducts) {
+		this.amountProducts = amountProducts;
 	}
 	
 

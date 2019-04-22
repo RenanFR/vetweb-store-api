@@ -56,5 +56,13 @@ public class ProductResource {
 		ResponseEntity<String> response = new ResponseEntity<>("The product " + deleted.getId() + " was deleted successfully", HttpStatus.NO_CONTENT);
 		return response;
 	}
+	
+	@GetMapping
+	@RequestMapping("total")
+	public ResponseEntity<Integer> count() {
+		int count = this.productService.getProducts().size();
+		ResponseEntity<Integer> response = new ResponseEntity<>(count, HttpStatus.OK);
+		return response;
+	}
 
 }

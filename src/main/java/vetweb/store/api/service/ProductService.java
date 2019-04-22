@@ -32,7 +32,12 @@ public class ProductService {
 	}
 	
 	public List<Category> getCategories() {
-		return this.categoryRepository.findAll();
+		List<Category> categories = this.categoryRepository.findAll();
+		categories
+		.forEach(cat -> {
+			cat.setAmountProducts(cat.getProducts().size());
+		});
+		return categories;
 	}
 	
 	public Product findById(Long id) {
@@ -40,7 +45,9 @@ public class ProductService {
 	}
 	
 	public Category findCategoryById(Long id) {
-		return this.categoryRepository.findById(id).get();
+		Category category = this.categoryRepository.findById(id).get();
+		category.setAmountProducts(category.getProducts().size());
+		return category;
 	}
 	
 	public Long edit(Product product) {
