@@ -21,7 +21,7 @@ public class CORSFilter implements Filter{
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -34,7 +34,7 @@ public class CORSFilter implements Filter{
         	httpServletResponse.setStatus(HttpServletResponse.SC_OK);
             return;
         }
-        chain.doFilter(request, response);			
+        filterChain.doFilter(request, response);			
 	}
 
 	@Override
