@@ -3,13 +3,18 @@ package vetweb.store.api.models.auth;
 import java.util.Collection;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 //Model for user information
 @Entity
@@ -26,6 +31,9 @@ public class User implements UserDetails{
 	
 	private String password;
 	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JsonManagedReference
+	@JoinTable(name = "tbl_user_profiles")
 	private Collection<Profile> profiles;
 
 	public Long getId() {
