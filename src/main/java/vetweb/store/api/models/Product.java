@@ -20,7 +20,6 @@ public class Product {
 	private Double price;
 	
 	@ManyToOne
-//	@JsonBackReference
 	private Category category;
 	
 	public Product() {

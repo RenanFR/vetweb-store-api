@@ -9,30 +9,33 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
+import vetweb.store.api.models.auth.User;
+import vetweb.store.api.service.auth.UserService;
+
+@Component
 public class JWTTokenVerifierFilter extends GenericFilterBean{
 	
-	private TokenAuthService tokenAuthService;
-	
-	public JWTTokenVerifierFilter() {
-	}
-	
 	@Autowired
-	public JWTTokenVerifierFilter(TokenAuthService tokenAuthService) {
-		this.tokenAuthService = tokenAuthService;
-	}
+	private UserService userService;
 	
-	public void initializeFields() {
-		
-	}
-
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		Authentication authentication = tokenAuthService.getAuth((HttpServletRequest)request);
+		String name = TokenAuthService.getAuth((HttpServletRequest)request);
+		if (userService == null) {
+			
+		}
+		User user = userService.findByName(name);
+		Authentication authentication = null;
+		if (user != null) {
+			authentication = new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword(), user.getAuthorities());
+		}
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		chain.doFilter(request, response);
 	}

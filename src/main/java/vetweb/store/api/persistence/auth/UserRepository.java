@@ -1,4 +1,4 @@
-package vetweb.store.api.persistence;
+package vetweb.store.api.persistence.auth;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

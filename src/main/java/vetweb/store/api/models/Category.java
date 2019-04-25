@@ -23,7 +23,6 @@ public class Category {
 	private String description;
 	
 	@OneToMany(mappedBy = "category")
-//	@JsonManagedReference
 	@JsonIgnore
 	private List<Product> products;
 	

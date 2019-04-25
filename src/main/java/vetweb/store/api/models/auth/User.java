@@ -1,6 +1,8 @@
 package vetweb.store.api.models.auth;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,8 +15,6 @@ import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 //Model for user information
 @Entity
@@ -32,9 +32,17 @@ public class User implements UserDetails{
 	private String password;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JsonManagedReference
+//	@JsonManagedReference
 	@JoinTable(name = "tbl_user_profiles")
-	private Collection<Profile> profiles;
+	private List<Profile> profiles = new ArrayList<Profile>();
+
+	public List<Profile> getProfiles() {
+		return profiles;
+	}
+
+	public void setProfiles(List<Profile> profiles) {
+		this.profiles = profiles;
+	}
 
 	public Long getId() {
 		return id;

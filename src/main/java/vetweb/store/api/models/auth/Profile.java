@@ -1,16 +1,10 @@
 package vetweb.store.api.models.auth;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "tbl_profile")
@@ -21,9 +15,13 @@ public class Profile implements GrantedAuthority{
 	@Id
 	private String role;
 	
-	@ManyToMany(mappedBy = "profiles")
-	@JsonBackReference
-	private Set<User> users = new HashSet<>();
+//	@ManyToMany(mappedBy = "profiles")
+//	@JsonBackReference
+//	private List<User> users = new ArrayList<>();
+
+	public String getRole() {
+		return role;
+	}
 
 	@Override
 	public String getAuthority() {
@@ -34,12 +32,12 @@ public class Profile implements GrantedAuthority{
 		this.role = role;
 	}
 	
-	public void setUsers(Set<User> users) {
-		this.users = users;
-	}
-	
-	public Set<User> getUsers() {
-		return users;
-	}
+//	public void setUsers(List<User> users) {
+//		this.users = users;
+//	}
+//	
+//	public List<User> getUsers() {
+//		return users;
+//	}
 
 }
