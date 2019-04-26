@@ -24,4 +24,8 @@ public class UserService implements UserDetailsService{
 		return userRepository.findByName(username);
 	}
 	
+	public void signUp(User user) {
+		this.userRepository.save(user);
+	}
+	
 }
