@@ -32,8 +32,7 @@ public class User implements UserDetails{
 	private String password;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-//	@JsonManagedReference
-	@JoinTable(name = "tbl_user_profiles")
+	@JoinTable(name = "tbl_user_profile")
 	private List<Profile> profiles = new ArrayList<Profile>();
 
 	public List<Profile> getProfiles() {

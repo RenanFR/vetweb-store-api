@@ -10,10 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import vetweb.store.api.config.security.jwt.JWTLoginAndTokenGeneratorFilter;
-import vetweb.store.api.config.security.jwt.JWTTokenVerifierFilter;
+import vetweb.store.api.config.security.jwt.JwtConfig;
+import vetweb.store.api.config.security.jwt.TokenAuthService;
 import vetweb.store.api.service.auth.UserService;
 
 @EnableWebSecurity
@@ -21,6 +20,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private TokenAuthService tokenAuthService;
 	
 	@Bean
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -30,14 +32,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+			.httpBasic().disable()
 			.csrf().disable()
-			.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/login").permitAll()
-			.anyRequest().authenticated()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-			.addFilterBefore(new JWTLoginAndTokenGeneratorFilter(authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(new JWTTokenVerifierFilter(authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class)
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.authorizeRequests()
+				.antMatchers(HttpMethod.POST, "/login").permitAll()
+				.anyRequest().authenticated()
+			.and()
+			.apply(new JwtConfig(tokenAuthService));
 	}
 	
 	@Override

@@ -1,14 +1,20 @@
 package vetweb.store.api.config.security.jwt;
 
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -23,25 +29,38 @@ import vetweb.store.api.service.auth.UserService;
 @Service
 public class TokenAuthService {
 	
+    @Value("${security.jwt.token.secret-key:secret}")
+	private String key;
+
+    @Value("${security.jwt.token.expire-length:86400000}")
+    private long expirationTime;
+	
 	private static final long EXPIRATION_TIME = 86400000;
     private static final String SECRET = "Vetweb_Secret";
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     
+    @PostConstruct
+    protected void initializeKey() {
+    	key = Base64.getEncoder().encodeToString(SECRET.getBytes());
+    	expirationTime = EXPIRATION_TIME;
+    }
+    
     @Autowired
     private UserService userService;
     
-    public String createToken(String userName, List<String> roles) {
+    public String createToken(String userName, Collection<? extends GrantedAuthority> roles) {
     	Claims claims = Jwts.claims().setSubject(userName);//Map of custom properties to be added on token
-    	claims.put("profiles", roles);
+    	List<String> profiles = roles.stream().map(p -> p.getAuthority()).collect(Collectors.toList());
+    	claims.put("profiles", profiles);
     	Date now = new Date();
 		String token = Jwts.builder()
     		.setClaims(claims)
     		.setIssuedAt(now)
-    		.setExpiration(new Date(now.getTime() + EXPIRATION_TIME))
-    		.signWith(SignatureAlgorithm.HS256, Base64.getEncoder().encodeToString(SECRET.getBytes()))
+    		.setExpiration(new Date(now.getTime() + expirationTime))
+    		.signWith(SignatureAlgorithm.HS256, key)
     		.compact();
-    	return token;
+    	return TOKEN_PREFIX.concat(token);
     }
     
     public Authentication getAuthentication(String token) {
@@ -51,7 +70,7 @@ public class TokenAuthService {
     
     public String getUserFromToken(String token) {
     	String userName = Jwts.parser()
-    			.setSigningKey(SECRET)
+    			.setSigningKey(key)
     			.parseClaimsJws(token)
     			.getBody()
     			.getSubject();
@@ -65,31 +84,18 @@ public class TokenAuthService {
     	return null;
     }
     
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws AuthenticationException {
     	try {
     		Jws<Claims> claims = Jwts.parser()
-    				.setSigningKey(SECRET)
+    				.setSigningKey(key)
     				.parseClaimsJws(token);
     		if (claims.getBody().getExpiration().before(new Date())) {
     			return false;
     		}
     		return true;
     	} catch (JwtException | IllegalArgumentException exception) {
-    		throw new InvalidJwtAuthenticationException
+    		throw new AuthenticationException("Invalid token, it may be expired or not defined");
     	}
     }
-    
-//    public void addJsonWebTokenToUserResponse(HttpServletResponse response, String userName) {
-//		String jwt = Jwts.builder()
-//    						.setSubject(userName)
-//    						.setExpiration(Date.from(LocalDate.now().plus(EXPIRATION_TIME, ChronoUnit.MILLIS).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()))
-//    						.signWith(SignatureAlgorithm.HS512, SECRET)
-//    						.compact();
-//		String token = TOKEN_PREFIX + " " + jwt;
-//		response.addHeader(HEADER_STRING, token);
-//    }
-    
-    
-	
 
 }

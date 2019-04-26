@@ -14,10 +14,6 @@ public class Profile implements GrantedAuthority{
 	
 	@Id
 	private String role;
-	
-//	@ManyToMany(mappedBy = "profiles")
-//	@JsonBackReference
-//	private List<User> users = new ArrayList<>();
 
 	public String getRole() {
 		return role;
@@ -31,13 +27,5 @@ public class Profile implements GrantedAuthority{
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
-//	public void setUsers(List<User> users) {
-//		this.users = users;
-//	}
-//	
-//	public List<User> getUsers() {
-//		return users;
-//	}
 
 }
