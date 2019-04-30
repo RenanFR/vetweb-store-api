@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import vetweb.store.api.models.auth.Profile;
@@ -37,6 +38,24 @@ public class UserService implements UserDetailsService{
 			}
 		}
 		this.userRepository.save(user);
+	}
+	
+	public List<User> getAll() {
+		return userRepository.findAll();
+	}
+	
+	public List<Profile> getAllProfiles() {
+		return profileRepository.findAll();
+	}
+	
+	public void saveProfile(Profile profile) {
+		profileRepository.save(profile);
+	}
+	
+	public void saveUser(User user) {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		userRepository.save(user);
 	}
 	
 }
