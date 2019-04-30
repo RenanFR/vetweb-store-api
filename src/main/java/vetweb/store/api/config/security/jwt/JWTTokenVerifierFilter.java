@@ -1,7 +1,6 @@
 package vetweb.store.api.config.security.jwt;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,7 +8,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -33,8 +31,11 @@ public class JWTTokenVerifierFilter extends GenericFilterBean{
 			filterChain.doFilter(servletRequest, servletResponse);
 			return;
 		}
-		String name = tokenAuthService.getAuth((HttpServletRequest)request);
-		Authentication authentication = new UsernamePasswordAuthenticationToken(name, null, new ArrayList<>());
+		String token = tokenAuthService.getAuth((HttpServletRequest)request);
+		Authentication authentication = null;
+		if (token != null && tokenAuthService.validateToken(token)) {
+			authentication = tokenAuthService.getAuthentication(token);
+		}
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		filterChain.doFilter(servletRequest, servletResponse);
 	}

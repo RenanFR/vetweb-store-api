@@ -2,6 +2,10 @@ package vetweb.store.api.resources;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import vetweb.store.api.config.security.jwt.TokenAuthService;
 import vetweb.store.api.models.Product;
 import vetweb.store.api.service.ProductService;
 
@@ -24,6 +29,8 @@ public class ProductResource {
 	@Autowired
 	private ProductService productService;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProductResource.class);
+	
 	@PostMapping
 	public ResponseEntity<String> saveProduct(@RequestBody Product product) {
 		Long id = this.productService.saveProduct(product);
@@ -31,7 +38,9 @@ public class ProductResource {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Product>> getProducts() {
+	public ResponseEntity<List<Product>> getProducts(HttpServletRequest request) {
+		String token = request.getHeader(TokenAuthService.HEADER_STRING);
+		LOGGER.info(token);
 		List<Product> products = this.productService.getProducts();
 		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}

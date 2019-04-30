@@ -1,7 +1,10 @@
 package vetweb.store.api.models.auth;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +17,9 @@ public class Profile implements GrantedAuthority{
 	
 	@Id
 	private String role;
+	
+	@ManyToMany(mappedBy = "profiles")
+	private List<User> users;
 
 	public String getRole() {
 		return role;
@@ -26,6 +32,14 @@ public class Profile implements GrantedAuthority{
 	
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 }

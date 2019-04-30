@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +83,7 @@ public class TokenAuthService {
     	return null;
     }
     
-    public boolean validateToken(String token) throws AuthenticationException {
+    public boolean validateToken(String token) {
     	try {
     		Jws<Claims> claims = Jwts.parser()
     				.setSigningKey(key)
@@ -94,7 +93,7 @@ public class TokenAuthService {
     		}
     		return true;
     	} catch (JwtException | IllegalArgumentException exception) {
-    		throw new AuthenticationException("Invalid token, it may be expired or not defined");
+    		throw new RuntimeException("Invalid token, it may be expired or not defined");
     	}
     }
 

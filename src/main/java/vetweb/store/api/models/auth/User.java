@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -31,8 +32,12 @@ public class User implements UserDetails{
 	
 	private String password;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "tbl_user_profile")
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "tbl_user_profile",
+				joinColumns = @JoinColumn(
+          			name = "user_id", referencedColumnName = "id"), 
+    			inverseJoinColumns = @JoinColumn(
+					name = "profile_id", referencedColumnName = "role"))
 	private List<Profile> profiles = new ArrayList<Profile>();
 
 	public List<Profile> getProfiles() {
