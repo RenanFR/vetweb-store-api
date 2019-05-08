@@ -52,6 +52,10 @@ public class UserService implements UserDetailsService{
 		profileRepository.save(profile);
 	}
 	
+	public boolean userExists(String user) {
+		return userRepository.findByName(user).isPresent();
+	}
+	
 	public void saveUser(User user) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword(passwordEncoder.encode(user.getPassword()));

@@ -38,6 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			.and()
 				.authorizeRequests()
 				.antMatchers(HttpMethod.POST, "/login").permitAll()
+				.antMatchers(HttpMethod.GET, "/login/exists/{user}").permitAll()
 				.anyRequest().authenticated()
 			.and()
 			.apply(new JwtConfig(tokenAuthService));
