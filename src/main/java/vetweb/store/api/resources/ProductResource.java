@@ -1,6 +1,7 @@
 package vetweb.store.api.resources;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import vetweb.store.api.config.security.jwt.TokenAuthService;
+import vetweb.store.api.models.Category;
+import vetweb.store.api.models.PriceRange;
 import vetweb.store.api.models.Product;
 import vetweb.store.api.service.ProductService;
 
@@ -50,6 +53,12 @@ public class ProductResource {
 		Product product = this.productService.findById(id);
 		ResponseEntity<Product> response = new ResponseEntity<>(product, HttpStatus.OK);
 		return response;
+	}
+	
+	@GetMapping(path = "drilldown")
+	public Map<Category, Map<PriceRange, Map<String, List<Product>>>> drillDownByCategoryPriceRangeProduct() {
+		Map<Category, Map<PriceRange, Map<String, List<Product>>>> drillDown = this.productService.drillDownByCategoryPriceRangeProduct();
+		return drillDown;
 	}
 	
 	@PutMapping
