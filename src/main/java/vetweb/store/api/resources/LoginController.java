@@ -47,11 +47,12 @@ public class LoginController {
 	
 	@GetMapping("exists/{user}")
 	public boolean userExists(@PathVariable("user")String user) {
-		return userService.userExists(user);
+		boolean doesUserExists = userService.userExists(user);
+		return doesUserExists;
 	}
 	
 	@PostMapping
-	public ResponseEntity login(@RequestBody User user) {
+	public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
 		try {
 			String name = user.getName();
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(name, user.getPassword()));
