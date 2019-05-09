@@ -69,5 +69,10 @@ public class Category {
 		this.amountProducts = amountProducts;
 	}
 	
+	@Override
+	public String toString() {
+		return description;
+	}
+	
 
 }
