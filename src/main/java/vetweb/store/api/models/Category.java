@@ -29,6 +29,9 @@ public class Category {
 	@Transient
 	private int amountProducts;
 	
+	@Transient
+	private String percentageOfTotal;
+	
 	public Category() {
 	}
 
@@ -69,6 +72,14 @@ public class Category {
 		this.amountProducts = amountProducts;
 	}
 	
+	public String getPercentageOfTotal() {
+		return percentageOfTotal;
+	}
+
+	public void setPercentageOfTotal(String percentageOfTotal) {
+		this.percentageOfTotal = percentageOfTotal;
+	}
+
 	@Override
 	public String toString() {
 		return description;
