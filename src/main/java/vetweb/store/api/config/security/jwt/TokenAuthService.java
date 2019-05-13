@@ -52,6 +52,7 @@ public class TokenAuthService {
     	Claims claims = Jwts.claims().setSubject(userName);//Map of custom properties to be added on token
     	List<String> profiles = roles.stream().map(p -> p.getAuthority()).collect(Collectors.toList());
     	claims.put("profiles", profiles);
+    	claims.put("name", userName);
     	Date now = new Date();
 		String token = Jwts.builder()
     		.setClaims(claims)
