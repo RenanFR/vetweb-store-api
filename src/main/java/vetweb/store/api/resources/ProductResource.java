@@ -8,18 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import vetweb.store.api.config.security.jwt.TokenAuthService;
 import vetweb.store.api.models.Category;
@@ -27,7 +25,7 @@ import vetweb.store.api.models.PriceRange;
 import vetweb.store.api.models.Product;
 import vetweb.store.api.models.dtos.FormProductWithFile;
 import vetweb.store.api.service.ProductService;
-import vetweb.store.api.service.utils.FileServiceS3;
+import vetweb.store.api.service.utils.FileService;
 
 @RestController
 @RequestMapping("products")
@@ -36,15 +34,15 @@ public class ProductResource {
 	@Autowired
 	private ProductService productService;
 	
-	@Autowired @Qualifier("s3")
-	private FileServiceS3 fileServiceS3;
+	@Autowired
+	private FileService fileService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProductResource.class);
 	
-	@PostMapping
+	@RequestMapping(consumes = "multipart/form-data", method = RequestMethod.POST)
 	public ResponseEntity<String> saveProduct(@RequestBody FormProductWithFile productWithFile) {
 		Long id = this.productService.saveProduct(productWithFile.getProduct());
-		String addressFile = fileServiceS3.storeFile(productWithFile.getFileImage());
+		String addressFile = fileService.storeFile(productWithFile.getFileImage());
 		LOGGER.info("Image stored on cloud with address " + addressFile);
 		return new ResponseEntity<String>("Your new product was included successfully with identifier " + id, HttpStatus.CREATED); 
 	}

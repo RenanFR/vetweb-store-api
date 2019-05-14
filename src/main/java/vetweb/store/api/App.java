@@ -1,16 +1,18 @@
 package vetweb.store.api;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import java.util.Arrays;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+
 import vetweb.store.api.models.auth.Profile;
 import vetweb.store.api.models.auth.User;
 import vetweb.store.api.service.auth.UserService;;
@@ -43,6 +45,11 @@ public class App {
 			LOGGER.info("Default user created with name " + user.getName());
 			userService.saveUser(user);
 		}
+	}
+	
+	@Bean
+	public MultipartResolver multipartResolver() {
+		return new StandardServletMultipartResolver();
 	}
 	
 }
