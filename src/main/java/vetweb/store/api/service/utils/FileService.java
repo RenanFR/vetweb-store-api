@@ -12,19 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import vetweb.store.api.resources.ProductResource;
-
 @Component
 public class FileService {
 	
 	@Autowired
 	private HttpServletRequest request;
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProductResource.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
 	
 	public String storeFile(MultipartFile file) {
 		String baseDirectory = "images/";
-		String realPath = request.getServletContext().getRealPath(baseDirectory);
+		String realPath = getClass().getClassLoader().getResource(baseDirectory).getPath();
 		try {
 			String filePath = realPath + "/" + file.getOriginalFilename();
 			file.transferTo(new File(filePath));
@@ -32,7 +30,7 @@ public class FileService {
 		} catch (FileAlreadyExistsException fileAlreadyExistsException) {
 			LOGGER.error("File exists");
 		} catch (IOException exception) {
-			LOGGER.error("Unknown error");
+			LOGGER.error("Unknown error " + exception.getMessage());
 		}
 		return null;
 	}

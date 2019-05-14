@@ -1,5 +1,6 @@
 package vetweb.store.api.resources;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +18,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import vetweb.store.api.config.security.jwt.TokenAuthService;
 import vetweb.store.api.models.Category;
 import vetweb.store.api.models.PriceRange;
 import vetweb.store.api.models.Product;
-import vetweb.store.api.models.dtos.FormProductWithFile;
 import vetweb.store.api.service.ProductService;
 import vetweb.store.api.service.utils.FileService;
 
@@ -39,10 +46,24 @@ public class ProductResource {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProductResource.class);
 	
-	@RequestMapping(consumes = "multipart/form-data", method = RequestMethod.POST)
-	public ResponseEntity<String> saveProduct(@RequestBody FormProductWithFile productWithFile) {
-		Long id = this.productService.saveProduct(productWithFile.getProduct());
-		String addressFile = fileService.storeFile(productWithFile.getFileImage());
+	private <T> T map(String text, Class<T> tClass) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.readValue(text, tClass);
+		} catch (JsonParseException | JsonMappingException jsonException) {
+			LOGGER.info("Error creating Json");
+		} catch (IOException ioException) {
+			LOGGER.info("Generic input output exception");
+		}
+		return null;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, consumes = "multipart/form-data")
+	public ResponseEntity<String> saveProduct(@RequestParam("product")String productText, @RequestPart("fileImage")MultipartFile fileImage) 
+				throws JsonParseException, JsonMappingException, IOException{
+		Product product = this.<Product>map(productText, Product.class);
+		Long id = this.productService.saveProduct(product);
+		String addressFile = fileService.storeFile(fileImage);
 		LOGGER.info("Image stored on cloud with address " + addressFile);
 		return new ResponseEntity<String>("Your new product was included successfully with identifier " + id, HttpStatus.CREATED); 
 	}
