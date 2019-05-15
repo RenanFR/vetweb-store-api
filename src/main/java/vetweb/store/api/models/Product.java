@@ -1,6 +1,8 @@
 package vetweb.store.api.models;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +23,11 @@ public class Product {
 	
 	@ManyToOne
 	private Category category;
+	
+	@Enumerated(EnumType.STRING)
+	private PriceRange priceRange;
+	
+	private String fileImage;
 	
 	public Product() {
 	}
@@ -61,6 +68,22 @@ public class Product {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public PriceRange getPriceRange() {
+		return priceRange;
+	}
+
+	public void setPriceRange(PriceRange priceRange) {
+		this.priceRange = priceRange;
+	}
+
+	public String getFileImage() {
+		return fileImage;
+	}
+
+	public void setFileImage(String fileImage) {
+		this.fileImage = fileImage;
 	}
 	
 

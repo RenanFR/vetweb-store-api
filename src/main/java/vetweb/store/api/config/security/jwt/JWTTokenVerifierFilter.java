@@ -8,36 +8,36 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import vetweb.store.api.models.auth.User;
-import vetweb.store.api.service.auth.UserService;
-
 @Component
 public class JWTTokenVerifierFilter extends GenericFilterBean{
 	
-	@Autowired
-	private UserService userService;
+	private TokenAuthService tokenAuthService;
+	
+	public JWTTokenVerifierFilter(TokenAuthService tokenAuthService) {
+		this.tokenAuthService = tokenAuthService;
+	}
 	
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
 			throws IOException, ServletException {
-		String name = TokenAuthService.getAuth((HttpServletRequest)request);
-		if (userService == null) {
-			
+		HttpServletRequest request = (HttpServletRequest)servletRequest;
+		String header = request.getHeader(TokenAuthService.HEADER_STRING);
+		if (header == null || !header.startsWith(TokenAuthService.TOKEN_PREFIX)) {
+			filterChain.doFilter(servletRequest, servletResponse);
+			return;
 		}
-		User user = userService.findByName(name);
+		String token = tokenAuthService.getAuth((HttpServletRequest)request);
 		Authentication authentication = null;
-		if (user != null) {
-			authentication = new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword(), user.getAuthorities());
+		if (token != null && tokenAuthService.validateToken(token)) {
+			authentication = tokenAuthService.getAuthentication(token);
 		}
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		chain.doFilter(request, response);
+		filterChain.doFilter(servletRequest, servletResponse);
 	}
 
 }

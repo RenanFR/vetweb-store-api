@@ -1,0 +1,15 @@
+package vetweb.store.api.models;
+
+public enum PriceRange {
+
+	ZEROTOHUNDRED,
+
+	HUNDREDTOFIVEHUNDREDS,
+
+	FIVEHUNDREDSTOTHOUSAND,
+
+	THOUSANDANDABOVE,
+
+	UNKNOWN
+	
+}
