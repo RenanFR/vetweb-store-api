@@ -62,8 +62,9 @@ public class ProductResource {
 	public ResponseEntity<String> saveProduct(@RequestParam("product")String productText, @RequestPart("fileImage")MultipartFile fileImage) 
 				throws JsonParseException, JsonMappingException, IOException{
 		Product product = this.<Product>map(productText, Product.class);
-		Long id = this.productService.saveProduct(product);
 		String addressFile = fileService.storeFile(fileImage);
+		product.setFileImage(addressFile);
+		Long id = this.productService.saveProduct(product);
 		LOGGER.info("Image stored on cloud with address " + addressFile);
 		return new ResponseEntity<String>("Your new product was included successfully with identifier " + id, HttpStatus.CREATED); 
 	}

@@ -27,6 +27,8 @@ public class Product {
 	@Enumerated(EnumType.STRING)
 	private PriceRange priceRange;
 	
+	private String fileImage;
+	
 	public Product() {
 	}
 	
@@ -74,6 +76,14 @@ public class Product {
 
 	public void setPriceRange(PriceRange priceRange) {
 		this.priceRange = priceRange;
+	}
+
+	public String getFileImage() {
+		return fileImage;
+	}
+
+	public void setFileImage(String fileImage) {
+		this.fileImage = fileImage;
 	}
 	
 
