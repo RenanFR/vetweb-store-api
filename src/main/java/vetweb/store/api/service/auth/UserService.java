@@ -1,6 +1,7 @@
 package vetweb.store.api.service.auth;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,14 @@ public class UserService implements UserDetailsService{
 		return userRepository
 					.findByName(username)
 					.orElseThrow(() -> new UsernameNotFoundException("User with name " + username + " not founded"));
+	}
+	
+	public User findByName(String userName) {
+		try {
+			return userRepository.findByName(userName).get();
+		} catch (NoSuchElementException exception) {
+			return null;
+		}
 	}
 	
 	public void signUp(User user) {
@@ -58,8 +67,13 @@ public class UserService implements UserDetailsService{
 	
 	public void saveUser(User user) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		if (user.getPassword() != null)
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
+	}
+	
+	public Profile findProfileByDescription(String id) {
+		return profileRepository.findById(id).orElse(null);
 	}
 	
 }

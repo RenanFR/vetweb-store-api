@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,6 +32,9 @@ public class User implements UserDetails{
 	private String name;
 	
 	private String password;
+	
+	@Column(name = "is_social_login")
+	private Boolean isSocialLogin;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "tbl_user_profile",
@@ -100,6 +104,14 @@ public class User implements UserDetails{
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public Boolean isSocialLogin() {
+		return isSocialLogin;
+	}
+
+	public void setSocialLogin(Boolean isSocialLogin) {
+		this.isSocialLogin = isSocialLogin;
 	}
 
 }

@@ -36,6 +36,7 @@ public class App {
 			User user = new User();
 			user.setName("user");
 			user.setPassword("pass");
+			user.setSocialLogin(false);
 			if (userService.getAllProfiles().isEmpty()) {
 				Profile profile = new Profile();
 				profile.setRole("ROLE");
