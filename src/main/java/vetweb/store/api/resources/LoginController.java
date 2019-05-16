@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,6 +31,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
 import vetweb.store.api.config.security.jwt.TokenAuthService;
+import vetweb.store.api.models.auth.GmailUser;
+import vetweb.store.api.models.auth.GmailUser.GmailUserBuilder;
 import vetweb.store.api.models.auth.User;
 import vetweb.store.api.service.auth.UserService;
 
@@ -46,6 +49,9 @@ public class LoginController {
 	@Autowired
 	private UserService userService;
 	
+	@Value("${id.client.oauth}")
+	private String idClientOauth;
+	
 	@PostMapping("signup")
 	public void signUp(@RequestBody User user) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -60,17 +66,34 @@ public class LoginController {
 		return doesUserExists;
 	}
 	
+	//Get user information from token payload
+	private GmailUser setUserFromPayload(Payload payload) {
+		GmailUser gmailUser = new GmailUserBuilder()
+			.withEmail(payload.get("email").toString())
+			.withName(payload.get("name").toString())
+			.withPicture(payload.get("picture").toString())
+			.withJti(payload.get("jti").toString())
+			.withLocale(payload.get("locale").toString())
+			.withSub(payload.get("sub").toString())
+			.withIss(payload.get("iss").toString())
+			.withExp(payload.get("exp").toString())
+			.withIat(payload.get("iat").toString())
+			.withAud(payload.get("aud").toString())
+			.build();
+		return gmailUser;
+	}
+	
 	@PostMapping("google")
-	public ResponseEntity<String> handleGoogleToken(@RequestBody String token) 
+	public ResponseEntity<GmailUser> handleGoogleToken(@RequestBody String token) 
 			throws IOException, GeneralSecurityException {
 		GoogleIdTokenVerifier tokenVerifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-				.setAudience(Collections.singletonList("176152464540-uv4anvbherda5lsrouk0v4lsuaeio2oj.apps.googleusercontent.com"))
+				.setAudience(Collections.singletonList(this.idClientOauth))
 				.build();
 		GoogleIdToken idToken = tokenVerifier.verify(token);
 		if (idToken != null) {
 			Payload payload = idToken.getPayload();
-			String email = (String)payload.getSubject();
-			return ResponseEntity.ok(email);
+			GmailUser gmailUser = this.setUserFromPayload(payload);
+			return ResponseEntity.ok(gmailUser);
 		}
 		return null;
 	}
