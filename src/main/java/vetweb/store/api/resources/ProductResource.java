@@ -27,7 +27,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import vetweb.store.api.config.security.jwt.TokenAuthService;
 import vetweb.store.api.models.Category;
 import vetweb.store.api.models.PriceRange;
 import vetweb.store.api.models.Product;
@@ -71,8 +70,6 @@ public class ProductResource {
 	
 	@GetMapping
 	public ResponseEntity<List<Product>> getProducts(HttpServletRequest request) {
-		String token = request.getHeader(TokenAuthService.HEADER_STRING);
-		LOGGER.info(token);
 		List<Product> products = this.productService.getProducts();
 		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}

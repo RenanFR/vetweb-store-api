@@ -1,7 +1,5 @@
 package vetweb.store.api.resources;
 
-import static org.springframework.http.ResponseEntity.ok;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import static org.springframework.http.ResponseEntity.ok;
 
 import com.google.api.client.auth.openidconnect.IdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -31,10 +30,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
-import vetweb.store.api.config.security.jwt.TokenAuthService;
+import vetweb.store.api.config.security.jwt.TokenService;
 import vetweb.store.api.models.auth.GmailUser;
-import vetweb.store.api.models.auth.Profile;
 import vetweb.store.api.models.auth.GmailUser.GmailUserBuilder;
+import vetweb.store.api.models.auth.Profile;
 import vetweb.store.api.models.auth.User;
 import vetweb.store.api.service.auth.UserService;
 
@@ -44,9 +43,6 @@ public class LoginController {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private TokenAuthService tokenAuthService;
 	
 	@Autowired
 	private UserService userService;
@@ -135,7 +131,7 @@ public class LoginController {
 			String password = (user.isSocialLogin() == null || !user.isSocialLogin()) ? user.getPassword() : "";
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(name, password));
 			UserDetails loadUser = userService.loadUserByUsername(name);
-			String token = tokenAuthService.createToken(name, loadUser.getAuthorities());
+			String token = TokenService.createToken(name);
 			Map<String, String> userInformationMap = buildUserInformationMap(loadUser.getUsername(), token);
 			return ok(userInformationMap);
 		} catch (AuthenticationException authenticationException) {

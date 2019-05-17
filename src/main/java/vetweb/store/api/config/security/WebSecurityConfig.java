@@ -2,6 +2,7 @@ package vetweb.store.api.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -10,25 +11,25 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import vetweb.store.api.config.security.jwt.JwtConfig;
-import vetweb.store.api.config.security.jwt.TokenAuthService;
+import vetweb.store.api.config.security.jwt.JWTAuthenticationVerifier;
+import vetweb.store.api.config.security.jwt.JWTLoginFilter;
 import vetweb.store.api.service.auth.UserService;
 
+@Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private TokenAuthService tokenAuthService;
-	
 	@Bean
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManager();
 	}
 	
+	//Include JWT generation from login request and common requests from a provided JWT
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
@@ -42,7 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers(HttpMethod.POST, "/login/google").permitAll()
 				.anyRequest().authenticated()
 			.and()
-			.apply(new JwtConfig(tokenAuthService));
+			.addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JWTAuthenticationVerifier(), UsernamePasswordAuthenticationFilter.class);
 	}
 	
 	@Override
@@ -51,6 +53,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		auth
 			.userDetailsService(userService)
 			.passwordEncoder(passwordEncoder);
+		auth
+			.inMemoryAuthentication()
+			.withUser("username")
+			.password("{noop}password")
+			.roles("ROLE");
 	}
 
 }
