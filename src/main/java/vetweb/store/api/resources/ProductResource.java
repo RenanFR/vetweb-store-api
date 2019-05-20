@@ -71,6 +71,10 @@ public class ProductResource {
 	@GetMapping
 	public ResponseEntity<List<Product>> getProducts(HttpServletRequest request) {
 		List<Product> products = this.productService.getProducts();
+		products
+			.forEach((Product p) -> {
+				p.setFilePreview(fileService.getFileRealPath(p.getFileImage().replace("images/", "")));
+			});
 		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}
 	
