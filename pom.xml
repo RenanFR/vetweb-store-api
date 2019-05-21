@@ -106,6 +106,17 @@
 	    <artifactId>google-api-client</artifactId>
 	    <version>1.28.0</version>
 	</dependency>
+
+	<dependency>
+	    <groupId>com.wildbit.java</groupId>
+	    <artifactId>postmark</artifactId>
+	    <version>1.2.0</version>
+	</dependency>
+	
+	<dependency>
+        <groupId>org.glassfish.jersey.inject</groupId>
+        <artifactId>jersey-hk2</artifactId>
+    </dependency>	
     
   </dependencies>
   

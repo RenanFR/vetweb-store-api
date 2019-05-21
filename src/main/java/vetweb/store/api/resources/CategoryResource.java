@@ -1,5 +1,7 @@
 package vetweb.store.api.resources;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import vetweb.store.api.models.Category;
+import vetweb.store.api.service.PostmarkMailSender;
 import vetweb.store.api.service.ProductService;
 
 @RestController
@@ -24,10 +27,16 @@ public class CategoryResource {
 	@Autowired
 	private ProductService productService;
 	
+	@Autowired
+	private PostmarkMailSender mailSender;
+	
 	@PostMapping
 	public ResponseEntity<String> save(@RequestBody Category category) {
 		Long saved = this.productService.saveCategory(category);
-		ResponseEntity<String> response = new ResponseEntity<String>("The new category " + saved + " was saved successfully", HttpStatus.CREATED);
+		String message = "The new category " + saved + " was saved successfully";
+		ResponseEntity<String> response = new ResponseEntity<String>(message, HttpStatus.CREATED);
+		String dateInclusion = DateTimeFormatter.ofPattern("dd/L/yyyy").format(LocalDate.now());
+		mailSender.sendNewCategory(category, message, dateInclusion);
 		return response;
 	}
 	
