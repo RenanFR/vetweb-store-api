@@ -13,10 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import vetweb.store.api.models.Category;
 
 //Model for user information
 @Entity
@@ -35,6 +38,9 @@ public class User implements UserDetails{
 	
 	@Column(name = "is_social_login")
 	private Boolean isSocialLogin;
+	
+	@OneToMany(mappedBy = "userRegistration")
+	private List<Category> categoriesRegistered;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "tbl_user_profile",

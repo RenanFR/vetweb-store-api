@@ -1,16 +1,21 @@
 package vetweb.store.api.models;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import vetweb.store.api.models.auth.User;
 
 @Entity
 @Table(name = "tbl_category")
@@ -31,6 +36,12 @@ public class Category {
 	
 	@Transient
 	private String percentageOfTotal;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
+	private User userRegistration;
+	
+	private LocalDate dateRegistration;
 	
 	public Category() {
 	}
@@ -78,6 +89,22 @@ public class Category {
 
 	public void setPercentageOfTotal(String percentageOfTotal) {
 		this.percentageOfTotal = percentageOfTotal;
+	}
+
+	public User getUserRegistration() {
+		return userRegistration;
+	}
+
+	public void setUserRegistration(User userRegistration) {
+		this.userRegistration = userRegistration;
+	}
+
+	public LocalDate getDateRegistration() {
+		return dateRegistration;
+	}
+
+	public void setDateRegistration(LocalDate dateRegistration) {
+		this.dateRegistration = dateRegistration;
 	}
 
 	@Override
