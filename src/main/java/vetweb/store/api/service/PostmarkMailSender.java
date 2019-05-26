@@ -27,9 +27,9 @@ public class PostmarkMailSender {
 		TemplatedMessage message = new TemplatedMessage(FROM, "renan.rodrigues@accountfy.com");
 		message.setTemplateAlias("new-category");
 		Map<String, Object> propertiesTemplate = new HashMap<>();
-		propertiesTemplate.put("commenter_name", category.getDescription());
-		propertiesTemplate.put("timestamp", dateInclusion);
-		propertiesTemplate.put("body", msg);
+		propertiesTemplate.put("category", category.getDescription());
+		propertiesTemplate.put("inclusionDate", dateInclusion);
+		propertiesTemplate.put("notificationText", msg);
 		message.setTemplateModel(propertiesTemplate);
 		ApiClient apiClient = Postmark.getApiClient(API_TOKEN);
 		try {
