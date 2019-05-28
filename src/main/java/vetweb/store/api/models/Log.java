@@ -2,6 +2,7 @@ package vetweb.store.api.models;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -15,6 +16,7 @@ public class Log {
 	
 	private String message;
 	
+	@Lob
 	private String details;
 
 	public Log() {

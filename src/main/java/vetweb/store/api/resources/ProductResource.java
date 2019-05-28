@@ -2,7 +2,6 @@ package vetweb.store.api.resources;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,8 +26,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import vetweb.store.api.models.Category;
-import vetweb.store.api.models.PriceRange;
 import vetweb.store.api.models.Product;
 import vetweb.store.api.service.ProductService;
 import vetweb.store.api.service.utils.FileService;
@@ -83,12 +80,6 @@ public class ProductResource {
 		Product product = this.productService.findById(id);
 		ResponseEntity<Product> response = new ResponseEntity<>(product, HttpStatus.OK);
 		return response;
-	}
-	
-	@GetMapping(path = "drilldown")
-	public Map<Category, Map<PriceRange, Map<String, List<Product>>>> drillDownByCategoryPriceRangeProduct() {
-		Map<Category, Map<PriceRange, Map<String, List<Product>>>> drillDown = this.productService.drillDownByCategoryPriceRangeProduct();
-		return drillDown;
 	}
 	
 	@PutMapping

@@ -1,8 +1,6 @@
 package vetweb.store.api.service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vetweb.store.api.models.Category;
-import vetweb.store.api.models.PriceRange;
 import vetweb.store.api.models.Product;
 import vetweb.store.api.persistence.CategoryRepository;
 import vetweb.store.api.persistence.ProductRepository;
@@ -82,20 +79,6 @@ public class ProductService {
 		Category category = this.categoryRepository.findById(id).get();
 		this.categoryRepository.delete(category);
 		return category;
-	}
-	
-	public Map<Category, Map<PriceRange, Map<String, List<Product>>>> drillDownByCategoryPriceRangeProduct() {
-		Map<Category, Map<PriceRange, Map<String, List<Product>>>> grouped = this.productRepository
-			.findAll()
-			.stream()
-			.map(prod -> {
-				if (prod.getPriceRange() == null)	prod.setPriceRange(PriceRange.UNKNOWN);
-				return prod;
-			})
-			.collect(Collectors.groupingBy(prod -> prod.getCategory(),
-					Collectors.groupingBy(prod -> prod.getPriceRange(),
-					Collectors.groupingBy(prod -> prod.getDescription()))));
-		return grouped;
 	}
 
 }
