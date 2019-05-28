@@ -19,8 +19,8 @@ public class FrontendLogService {
 	
 	public String saveLog(Log log) {
 		String user = logRepository.save(log).getLogPrimaryKey().getUser();
-		String logTime = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(log.getLogPrimaryKey().getTimeStamp())), TimeZone.getDefault().toZoneId()));
-		return "Logged saved for user " + user + " at " + logTime;
+		String logTime = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ssa").format(LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(log.getLogPrimaryKey().getTimeStamp())), TimeZone.getDefault().toZoneId()));
+		return "Error log saved for user " + user + " at " + logTime;
 	}
 
 }
