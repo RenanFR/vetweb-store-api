@@ -1,6 +1,5 @@
 package vetweb.store.api.models;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -41,7 +40,7 @@ public class Category {
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private User userRegistration;
 	
-	private LocalDate dateRegistration;
+	private String dateRegistration;
 	
 	public Category() {
 	}
@@ -99,11 +98,11 @@ public class Category {
 		this.userRegistration = userRegistration;
 	}
 
-	public LocalDate getDateRegistration() {
+	public String getDateRegistration() {
 		return dateRegistration;
 	}
 
-	public void setDateRegistration(LocalDate dateRegistration) {
+	public void setDateRegistration(String dateRegistration) {
 		this.dateRegistration = dateRegistration;
 	}
 

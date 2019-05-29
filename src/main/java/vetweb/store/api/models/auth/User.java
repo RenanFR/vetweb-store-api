@@ -50,6 +50,23 @@ public class User implements UserDetails{
 					name = "profile_id", referencedColumnName = "role"))
 	private List<Profile> profiles = new ArrayList<Profile>();
 
+	public User(Long id, String name, String password, Boolean isSocialLogin, List<Category> categoriesRegistered,
+			List<Profile> profiles) {
+		this.id = id;
+		this.name = name;
+		this.password = password;
+		this.isSocialLogin = isSocialLogin;
+		this.categoriesRegistered = categoriesRegistered;
+		this.profiles = profiles;
+	}
+
+	public User(String userRegistration) {
+		this.name = userRegistration;
+	}
+
+	public User() {
+	}
+
 	public List<Profile> getProfiles() {
 		return profiles;
 	}
