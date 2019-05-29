@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import vetweb.store.api.models.Category;
 
 //Model for user information
@@ -40,6 +42,7 @@ public class User implements UserDetails{
 	private Boolean isSocialLogin;
 	
 	@OneToMany(mappedBy = "userRegistration")
+	@JsonManagedReference
 	private List<Category> categoriesRegistered;
 	
 	@ManyToMany(fetch = FetchType.EAGER)

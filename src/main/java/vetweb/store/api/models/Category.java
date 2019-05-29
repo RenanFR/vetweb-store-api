@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import vetweb.store.api.models.auth.User;
@@ -38,6 +39,7 @@ public class Category {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
+	@JsonBackReference
 	private User userRegistration;
 	
 	private String dateRegistration;
