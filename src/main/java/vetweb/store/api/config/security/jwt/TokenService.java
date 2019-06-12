@@ -2,26 +2,38 @@ package vetweb.store.api.config.security.jwt;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import vetweb.store.api.models.auth.User;
+import vetweb.store.api.service.auth.UserService;
 
 //Useful class to generate and read token from token parameters
+@Component
+@PropertySource("classpath:token.properties")
 public class TokenService {
 	
-	private static final long EXPIRATION_TIME = 86400000;
+	public static long EXPIRATION_TIME;
 	
-	private static final String SECRET = "Vetweb_Secret";
+	public static String SECRET;
 	
-	public static final String TOKEN_PREFIX = "Bearer ";
+	public static String TOKEN_PREFIX;
 	
-	public static final String HEADER_STRING = "Authorization";
+	public static String HEADER_STRING;
+	
+	private static UserService userService;
 	
 	public static void addTokenToResponse(HttpServletResponse response, String userName) {
 		String jsonWebToken = createToken(userName);
@@ -29,8 +41,9 @@ public class TokenService {
 	}
 	
 	public static String createToken(String userName) {
+		User user = userService.findByName(userName);
 		return TOKEN_PREFIX + " " + Jwts.builder()
-			.setSubject(userName)
+			.setSubject(user.getUsername())
 			.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 			.signWith(SignatureAlgorithm.HS512, SECRET)
 			.compact();
@@ -49,6 +62,30 @@ public class TokenService {
 			}
 		}
 		return null;
+	}
+
+	public static void setUserService(UserService userService) {
+		TokenService.userService = userService;
+	}
+
+	@Value("${token.expiration.time}")
+	public void setExpirationTime(long expirationTime) {
+		TokenService.EXPIRATION_TIME = expirationTime;
+	}
+
+	@Value("${token.secret}")
+	public void setSecret(String secret) {
+		TokenService.SECRET = secret;
+	}
+
+	@Value("${token.prefix}")
+	public void setTokenPrefix(String tokenPrefix) {
+		TokenService.TOKEN_PREFIX = tokenPrefix;
+	}
+
+	@Value("${token.header}")
+	public void setHeaderString(String headerString) {
+		TokenService.HEADER_STRING = headerString;
 	}
 
 }
